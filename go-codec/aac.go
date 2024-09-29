@@ -132,6 +132,9 @@ func NewAdtsFrameHeader() *ADTS_Frame_Header {
 }
 
 func (frame *ADTS_Frame_Header) Decode(aac []byte) {
+    if len(aac) < 7 {
+        return
+    }
     _ = aac[6]
     frame.Fix_Header.ID = aac[1] >> 3
     frame.Fix_Header.Layer = aac[1] >> 1 & 0x03
@@ -178,6 +181,9 @@ func SampleToAACSampleIndex(sampling int) int {
 }
 
 func AACSampleIdxToSample(idx int) int {
+    if idx < 0 || idx >= len(AAC_Sampling_Idx) {
+        idx = 0
+    }
     return AAC_Sampling_Idx[idx]
 }
 
