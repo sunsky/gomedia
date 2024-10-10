@@ -75,7 +75,9 @@ func SplitAACFrame(frames []byte, onFrame func(aac []byte)) {
 	var adts ADTS_Frame_Header
 	start := FindSyncword(frames, 0)
 	for start >= 0 {
-		adts.Decode(frames[start:])
+		if err := adts.Decode(frames[start:]); err != nil {
+			return
+		}
 		frameSize := start + int(adts.Variable_Header.Frame_length)
 		if frameSize > len(frames) {
 			frameSize = len(frames)

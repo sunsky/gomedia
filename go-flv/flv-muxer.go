@@ -218,7 +218,9 @@ func (muxer *AACMuxer) Write(frames []byte, pts uint32, dts uint32) [][]byte {
 	var tags [][]byte
 	codec.SplitAACFrame(frames, func(aac []byte) {
 		hdr := codec.NewAdtsFrameHeader()
-		hdr.Decode(aac)
+		if err := hdr.Decode(aac); err != nil {
+			return
+		}
 		if muxer.updateSequence {
 			asc, _ := codec.ConvertADTSToASC(aac)
 			tags = append(tags, WriteAudioTag(asc.Encode(), FLV_AAC, 0, 0, true))
